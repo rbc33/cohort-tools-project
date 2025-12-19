@@ -6,6 +6,8 @@ const mongoose = require("mongoose")
 const PORT = 5005;
 const Cohort = require("./models/Cohort.model")
 const Student = require("./models/Student.model")
+const { errorHandler, notFoundHandler } = require('./middleware/error-handling');
+ 
 
 // STATIC DATA
 // Devs Team - Import the provided files with JSON data of students and cohorts here:
@@ -41,7 +43,7 @@ app.get("/docs", (req, res) => {
   res.sendFile(__dirname + "/views/docs.html");
 });
 
-app.post("/api/cohorts", (req, res) => {
+app.post("/api/cohorts", (req, res, next) => {
   Cohort.create(req.body)
   .then(createdCohort => {
       console.log('Cohort created ->', createdCohort);
@@ -49,12 +51,12 @@ app.post("/api/cohorts", (req, res) => {
     })
     .catch(error => {
       console.error('Error while creating the cohort ->', error);
-      res.status(500).json({ error: 'Failed to create the cohort' });
+      next(error)
     });
 }
 )
 
-app.get("/api/cohorts", (req, res) => {
+app.get("/api/cohorts", (req, res, next) => {
   Cohort.find({})
     .then(cohort => {
       console.log('Retrieved books ->', cohort);
@@ -63,11 +65,11 @@ app.get("/api/cohorts", (req, res) => {
     })
     .catch(error => {
       console.error('Error while retrieving cohort ->', error);
-      res.status(500).json({ error: 'Failed to retrieve cohort' });
+      next(error)
     });
 });
 
-app.get("/api/cohorts/:cohortId", (req, res) => {
+app.get("/api/cohorts/:cohortId", (req, res, next) => {
   const cohortId = req.params.cohortId;
   Cohort.findById(cohortId)
     .then(cohort => {
@@ -77,11 +79,11 @@ app.get("/api/cohorts/:cohortId", (req, res) => {
     })
     .catch(error => {
       console.error('Error while retrieving cohort ->', error);
-      res.status(500).json({ error: 'Failed to retrieve cohort' });
+      next(error)
     });
 });
 
-app.put("/api/cohorts/:cohortId", (req, res) => {
+app.put("/api/cohorts/:cohortId", (req, res, next) => {
   const cohortId = req.params.cohortId;
   Cohort.findByIdAndUpdate(cohortId, req.body, {new:true})
     .then(cohort => {
@@ -91,11 +93,11 @@ app.put("/api/cohorts/:cohortId", (req, res) => {
     })
     .catch(error => {
       console.error('Error while retrieving cohort ->', error);
-      res.status(500).json({ error: 'Failed to retrieve cohort' });
+      next(error)
     });
 });
 
-app.delete("/api/cohorts/:cohortId", (req, res) => {
+app.delete("/api/cohorts/:cohortId", (req, res, next) => {
   const cohortId = req.params.cohortId;
   Cohort.findByIdAndDelete(cohortId)
     .then(cohort => {
@@ -105,11 +107,11 @@ app.delete("/api/cohorts/:cohortId", (req, res) => {
     })
     .catch(error => {
       console.error('Error while deleting cohort ->', error);
-      res.status(500).json({ error: 'Failed to delete cohort' });
+      next(error)
     });
 });
 
-app.put('/api/cohorts/:cohortId', (req, res) => {
+app.put('/api/cohorts/:cohortId', (req, res, next) => {
   const cohortId = req.params.cohortId;
  
   Book.findByIdAndUpdate(cohortId, req.body, { new: true })
@@ -120,11 +122,11 @@ app.put('/api/cohorts/:cohortId', (req, res) => {
     })
     .catch(error => {
       console.error('Error while updating the cohor ->', error);
-      res.status(500).json({ error: 'Failed to update the cohor' });
+      next(error)
     });
 });
 
-app.post("/api/students", (req, res) => {
+app.post("/api/students", (req, res, next) => {
   Student.create(req.body)
     .then(students => {
       console.log('Created students ->', students);
@@ -133,11 +135,11 @@ app.post("/api/students", (req, res) => {
     })
     .catch(error => {
       console.error('Error while creating students ->', error);
-      res.status(500).json({ error: 'Failed to create students' });
+      next(error)
     });
 });
 
-app.get("/api/students", (req, res) => {
+app.get("/api/students", (req, res, next) => {
   Student.find({})
     .then(students => {
       console.log('Retrieved students ->', students);
@@ -146,11 +148,11 @@ app.get("/api/students", (req, res) => {
     })
     .catch(error => {
       console.error('Error while retrieving students ->', error);
-      res.status(500).json({ error: 'Failed to retrieve students' });
+      next(error)
     });
 });
 
-app.get("/api/students/:studentId", (req, res) => {
+app.get("/api/students/:studentId", (req, res, next) => {
   const studentId = req.params.studentId;
   Student.findById(studentId)
   .then(student => {
@@ -160,11 +162,11 @@ app.get("/api/students/:studentId", (req, res) => {
   })
   .catch(error => {
     console.error('Error while retrieving student ->', error);
-    res.status(500).json({ error: 'Failed to retrieve student' });
+    next(error)
   });
 });
 
-app.get("/api/students/cohort/:cohortId", (req, res) => {
+app.get("/api/students/cohort/:cohortId", (req, res, next) => {
   const cohortId = req.params.cohortId
   Student.find({cohort: cohortId})
   .then(students => {
@@ -174,11 +176,11 @@ app.get("/api/students/cohort/:cohortId", (req, res) => {
   })
   .catch(error => {
     console.error('Error while retrieving students ->', error);
-    res.status(500).json({ error: 'Failed to retrieve students' });
+    next(error)
   });
 });
 
-app.put("/api/students/:studentId", (req, res) => {
+app.put("/api/students/:studentId", (req, res, next) => {
   const studentId = req.params.studentId;
   Student.findByIdAndUpdate(studentId, req.body, {new: true})
     .then(student => {
@@ -188,11 +190,11 @@ app.put("/api/students/:studentId", (req, res) => {
     })
     .catch(error => {
       console.error('Error while updating student ->', error);
-      res.status(500).json({ error: 'Failed to update student' });
+      next(error)
     });
 });
 
-app.delete("/api/students/:studentId", (req, res) => {
+app.delete("/api/students/:studentId", (req, res, next) => {
   const studentId = req.params.studentId;
   Student.findByIdAndDelete(studentId)
     .then(student => {
@@ -202,10 +204,14 @@ app.delete("/api/students/:studentId", (req, res) => {
     })
     .catch(error => {
       console.error('Error while deleting student ->', error);
-      res.status(500).json({ error: 'Failed to delete student' });
+      next(error)
     });
 });
 
+
+// ERROR HANDLING MIDDLEWARE - Must be after all routes
+app.use(notFoundHandler);
+app.use(errorHandler);
 
 
 // START SERVER
