@@ -155,6 +155,7 @@ app.get("/api/students", (req, res, next) => {
 app.get("/api/students/:studentId", (req, res, next) => {
   const studentId = req.params.studentId;
   Student.findById(studentId)
+  .populate('cohort')
   .then(student => {
     console.log('Retrieved student ->', student);
     
@@ -216,6 +217,5 @@ app.use(errorHandler);
 
 // START SERVER
 app.listen(PORT, () => {
-  console.log(`Server listening on port ${PORT}`);
-  console.log(`http://localhost:${PORT}`);
+  console.log(`\nServer listening on http://localhost:${PORT}\n`);
 });

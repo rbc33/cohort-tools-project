@@ -246,7 +246,7 @@ const DEFAULT_STUDENT_FORM_VALUES = {
   program: "",
   background: "",
   image: "",
-  cohort: "",
+  cohort: null,
 };
 
 function StudentEditPage() {
@@ -297,6 +297,12 @@ function StudentEditPage() {
       }
     }
 
+    // Special handling for cohort dropdown - find the full cohort object
+    if (name === "cohort" && value) {
+      const selectedCohort = cohorts.find(c => c._id === value);
+      inputValue = selectedCohort || value;
+    }
+
     setStudent((prevStudent) => ({
       ...prevStudent,
       [name]: inputValue,
@@ -310,8 +316,12 @@ function StudentEditPage() {
         .then((response) => {
           const studentData = response.data;
           setStudent(studentData);
+          setLoading(false);
         })
-        .catch((error) => console.log(error));
+        .catch((error) => {
+          console.log(error);
+          setLoading(false);
+        });
     };
 
     const getCohorts = () => {
@@ -326,8 +336,11 @@ function StudentEditPage() {
 
     getStudent();
     getCohorts();
-    setLoading(false);
   }, [studentId]);
+
+  if (loading) {
+    return <div className="p-8 text-center">Loading...</div>;
+  }
 
   return (
     <div className="p-8 pb-16 mb-10 mt-10 rounded-lg shadow-md flex flex-col h-full relative w-full max-w-3xl mx-auto bg-white">
@@ -392,7 +405,7 @@ function StudentEditPage() {
         <input type="text" name="image" value={student.image} onChange={handleChange} className="border rounded p-2 w-full mb-6"/>
 
         <label className="text-gray-600 text-left ml-1 -mb-2 text-l font-bold">Cohort:</label>
-        <select name="cohort" value={student.cohort._id} onChange={handleChange} className="border rounded p-2 w-full mb-6 bg-gray-50">
+        <select name="cohort" value={student.cohort?._id || ""} onChange={handleChange} className="border rounded p-2 w-full mb-6 bg-gray-50">
         <option value="">-- Select a cohort --</option>
           {cohorts.map((cohort) => (
             <option key={cohort._id} value={cohort._id}>

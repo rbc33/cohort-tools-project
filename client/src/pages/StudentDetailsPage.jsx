@@ -67,9 +67,9 @@ function StudentDetailsPage() {
               </p>
               <p className="text-left mb-2 border-b pb-2">
                 <strong>Cohort:</strong> 
-                <Link className="ml-2 text-blue-500 hover:underline" to={`/cohorts/details/${student.cohort._id}`}>
+                {student.cohort && <Link className="ml-2 text-blue-500 hover:underline" to={`/cohorts/details/${student.cohort._id}`}>
                   {student.cohort.cohortName}
-                </Link>
+                </Link>}
               </p>
               {student && student.projects.length > 0 && (
               <p className="text-left mb-2 border-b pb-2">
