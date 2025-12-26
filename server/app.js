@@ -57,7 +57,7 @@ const studentRouter = require("./routes/student.routes");
 app.use("/api/students", studentRouter);  
 
 const userRouter = require("./routes/user.routes");       
-app.use("/api/users", userRouter);  
+app.use("/api/users",isAuthenticated, userRouter);  
 
 
  
