@@ -1,3 +1,4 @@
+require("dotenv").config();
 const express = require("express");
 const morgan = require("morgan");
 const cookieParser = require("cookie-parser");
@@ -43,171 +44,23 @@ app.get("/docs", (req, res) => {
   res.sendFile(__dirname + "/views/docs.html");
 });
 
-app.post("/api/cohorts", (req, res, next) => {
-  Cohort.create(req.body)
-  .then(createdCohort => {
-      console.log('Cohort created ->', createdCohort);
-      res.status(201).json(createdCohort);
-    })
-    .catch(error => {
-      console.error('Error while creating the cohort ->', error);
-      next(error)
-    });
-}
-)
 
-app.get("/api/cohorts", (req, res, next) => {
-  Cohort.find({})
-    .then(cohort => {
-      console.log('Retrieved books ->', cohort);
+const { isAuthenticated } = require("./middleware/jwt.middleware");
+
+const authRouter = require("./routes/auth.routes");       
+app.use("/auth", authRouter);
+
+const cohortRouter = require("./routes/cohort.routes");       
+app.use("/api/cohorts", cohortRouter);                            
  
-      res.status(200).json(cohort);
-    })
-    .catch(error => {
-      console.error('Error while retrieving cohort ->', error);
-      next(error)
-    });
-});
+const studentRouter = require("./routes/student.routes");       
+app.use("/api/students", studentRouter);  
 
-app.get("/api/cohorts/:cohortId", (req, res, next) => {
-  const cohortId = req.params.cohortId;
-  Cohort.findById(cohortId)
-    .then(cohort => {
-      console.log('Retrieved cohort ->', cohort);
+const userRouter = require("./routes/user.routes");       
+app.use("/api/users", userRouter);  
+
+
  
-      res.status(200).json(cohort);
-    })
-    .catch(error => {
-      console.error('Error while retrieving cohort ->', error);
-      next(error)
-    });
-});
-
-app.put("/api/cohorts/:cohortId", (req, res, next) => {
-  const cohortId = req.params.cohortId;
-  Cohort.findByIdAndUpdate(cohortId, req.body, {new:true})
-    .then(cohort => {
-      console.log('Retrieved cohort ->', cohort);
- 
-      res.status(200).json(cohort);
-    })
-    .catch(error => {
-      console.error('Error while retrieving cohort ->', error);
-      next(error)
-    });
-});
-
-app.delete("/api/cohorts/:cohortId", (req, res, next) => {
-  const cohortId = req.params.cohortId;
-  Cohort.findByIdAndDelete(cohortId)
-    .then(cohort => {
-      console.log('Deleted cohort ->', cohort);
- 
-      res.status(204).json(cohort);
-    })
-    .catch(error => {
-      console.error('Error while deleting cohort ->', error);
-      next(error)
-    });
-});
-
-app.put('/api/cohorts/:cohortId', (req, res, next) => {
-  const cohortId = req.params.cohortId;
- 
-  Book.findByIdAndUpdate(cohortId, req.body, { new: true })
-    .then(updatedCohor => {
-      console.log('Updated book ->', updatedCohor);
- 
-      res.status(204).json(updatedCohor);
-    })
-    .catch(error => {
-      console.error('Error while updating the cohor ->', error);
-      next(error)
-    });
-});
-
-app.post("/api/students", (req, res, next) => {
-  Student.create(req.body)
-    .then(students => {
-      console.log('Created students ->', students);
- 
-      res.status(200).json(students);
-    })
-    .catch(error => {
-      console.error('Error while creating students ->', error);
-      next(error)
-    });
-});
-
-app.get("/api/students", (req, res, next) => {
-  Student.find({})
-    .then(students => {
-      console.log('Retrieved students ->', students);
- 
-      res.status(200).json(students);
-    })
-    .catch(error => {
-      console.error('Error while retrieving students ->', error);
-      next(error)
-    });
-});
-
-app.get("/api/students/:studentId", (req, res, next) => {
-  const studentId = req.params.studentId;
-  Student.findById(studentId)
-  .populate('cohort')
-  .then(student => {
-    console.log('Retrieved student ->', student);
-    
-    res.status(200).json(student);
-  })
-  .catch(error => {
-    console.error('Error while retrieving student ->', error);
-    next(error)
-  });
-});
-
-app.get("/api/students/cohort/:cohortId", (req, res, next) => {
-  const cohortId = req.params.cohortId
-  Student.find({cohort: cohortId})
-  .then(students => {
-    console.log('Retrieved students ->', students);
-    
-    res.status(200).json(students);
-  })
-  .catch(error => {
-    console.error('Error while retrieving students ->', error);
-    next(error)
-  });
-});
-
-app.put("/api/students/:studentId", (req, res, next) => {
-  const studentId = req.params.studentId;
-  Student.findByIdAndUpdate(studentId, req.body, {new: true})
-    .then(student => {
-      console.log('Updated student ->', student);
- 
-      res.status(200).json(student);
-    })
-    .catch(error => {
-      console.error('Error while updating student ->', error);
-      next(error)
-    });
-});
-
-app.delete("/api/students/:studentId", (req, res, next) => {
-  const studentId = req.params.studentId;
-  Student.findByIdAndDelete(studentId)
-    .then(student => {
-      console.log('Deleted student ->', student);
- 
-      res.status(200).json(student);
-    })
-    .catch(error => {
-      console.error('Error while deleting student ->', error);
-      next(error)
-    });
-});
 
 
 // ERROR HANDLING MIDDLEWARE - Must be after all routes
