@@ -49,7 +49,7 @@ function CohortFilterBar({
       </div>
 
       <Link to="/cohorts/create" className="ml-auto">
-        <button className="px-4 py-1 rounded bg-blue-600 text-white hover:bg-blue-500 px-6">Create</button>
+        <button className="py-1 rounded bg-blue-600 text-white hover:bg-blue-500 px-6">Create</button>
       </Link>
     </div>
   );
