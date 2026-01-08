@@ -15,7 +15,7 @@ router.post("/", (req, res, next) => {
 })
 
 router.get("/", (req, res, next) => {
-  Cohort.find({})
+  Cohort.find(req.query)
     .then(cohort => {
       console.log('Retrieved books ->', cohort);
  

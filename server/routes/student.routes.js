@@ -20,9 +20,11 @@ router.post("/", (req, res, next) => {
 });
 
 router.get("/", (req, res, next) => {
-  Student.find({})
+  // console.log("req.query", req.query["program"])
+  // Student.find({program:req.query["program"]})
+  Student.find()
     .then(students => {
-      console.log('Retrieved students ->', students);
+      // console.log('Retrieved students ->', students);
  
       res.status(200).json(students);
     })
